@@ -5,10 +5,23 @@ import (
 	"net/http"
 	"encoding/json"
 	"encoding/base64"
+	"encoding/csv"
+    "fmt"
+    "os"
 )
 
 type JSONResponse struct {
 	message string
+}
+
+type GoogleLocation struct {
+	Criteria_ID string
+	Name string
+	Canonical_Name string
+	Parent_ID string
+	Country_Code string
+	Target_Type string
+	Status string
 }
 
 func calculateSecretValue( lengthOfString int ) (string, bool) {
@@ -241,10 +254,54 @@ func handleAPICall( w http.ResponseWriter, r *http.Request ) {
 
 }
 
+func ReadCsv(filename string) ([][]string, error) {
+
+    // Open CSV file
+    f, err := os.Open(filename)
+    if err != nil {
+        return [][]string{}, err
+    }
+    defer f.Close()
+
+    // Read File into a Variable
+    lines, err := csv.NewReader(f).ReadAll()
+    if err != nil {
+        return [][]string{}, err
+    }
+
+    return lines, nil
+}
+
 func main() {
-  fs := http.FileServer(http.Dir("./static"))
+	lines, err := ReadCsv("google_locations.csv")
+	if err != nil {
+		panic(err)
+	}
+	for _, line := range lines {
+        data := GoogleLocation{
+			Criteria_ID: line[0],
+			Name: line[1],
+			Canonical_Name: line[2],
+			Parent_ID: line[3],
+			Country_Code: line[4],
+			Target_Type: line[5],
+			Status: line[6],
+        }
+        fmt.Println(data.Name + " " + data.Canonical_Name)
+    }
+
+	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
 	http.HandleFunc("/api", handleAPICall)
 	log.Println("Listening...")
-  http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", nil)
 }
+
+// TODO:
+//  ---- Parse csv into array of structs
+//  ---- Make autocomplete work with array of structs
+//  ---- Make endpoint for autocomplete
+//  ---- Rate limiting for API
+//  ---- Typecheck API
+//  ---- Style FE code
+//  ---- Tidy up
