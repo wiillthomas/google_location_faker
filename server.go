@@ -10,6 +10,9 @@ import (
 	"github.com/falmar/goradix"
 )
 
+var radix = goradix.New(false)
+
+
 type JSONResponse struct {
 	message string
 }
@@ -217,13 +220,7 @@ func handleAPICall( w http.ResponseWriter, r *http.Request ) {
 	location := locationKeys[0]
 	query := queryKeys[0]
 
-
-	log.Println("Url Param 'location' is: " + string(location))
-	log.Println("Url Param 'q' is: " + string(query))
-
-
 	uuleValue := "w+CAIQICI"
-
 
 	parsedLocationCode, parseLocationOk := calculateSecretValue(len(location))
 
@@ -233,11 +230,9 @@ func handleAPICall( w http.ResponseWriter, r *http.Request ) {
 		return
 	}
 
-
 	var base64EncodedLocation string = base64.StdEncoding.EncodeToString([]byte(location))
 
 	response := "q=" + query + "&uule=" + uuleValue + parsedLocationCode + base64EncodedLocation
-
 
 	jsonOutput, jsonErr := json.Marshal(response)
 
@@ -245,8 +240,6 @@ func handleAPICall( w http.ResponseWriter, r *http.Request ) {
 
 	if jsonErr == nil {
 	}
-
-	log.Println( jsonOutput )
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
@@ -272,10 +265,35 @@ func ReadCsv(filename string) ([][]string, error) {
     return lines, nil
 }
 
+func handleAutoCompleteInput( w http.ResponseWriter, r *http.Request ) {
+	inputKeys, inputOK := r.URL.Query()["input"]
+
+	if !inputOK || len(inputKeys[0]) < 1 {
+		log.Println("Url parameter 'input' is missing ")
+		return
+	}
+
+	words, err := radix.AutoComplete(inputKeys[0], false)
+
+	if err != nil {
+		return
+	}
+
+	jsonOutput, jsonErr := json.Marshal(words)
+
+	if jsonErr != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonOutput)
+
+}
+
 func main() {
 	log.Println("Server Starting...")
-	radix := goradix.New(false)
-
+		
 	lines, err := ReadCsv("google_locations.csv")
 	if err != nil {
 		panic(err)
@@ -284,18 +302,11 @@ func main() {
 		radix.Insert(line[2])
 	}
 
-	words, err := radix.AutoComplete("Kab", false)
-
-	if err != nil {
-		return
-	}
-	
-	log.Println("AutoComplete: '%s'; Words: %v\n", "ro", words)
-
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
 	http.HandleFunc("/api", handleAPICall)
+	http.HandleFunc("/autocomplete", handleAutoCompleteInput)
 	log.Println("Listening...")
 	http.ListenAndServe(":8080", nil)
 }
