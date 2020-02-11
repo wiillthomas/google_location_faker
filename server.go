@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"encoding/base64"
 	"encoding/csv"
-    "fmt"
     "os"
 )
 
@@ -273,6 +272,9 @@ func ReadCsv(filename string) ([][]string, error) {
 }
 
 func main() {
+	log.Println("Server Starting...")
+	googleLocationSlice := make([]GoogleLocation, 102030)
+
 	lines, err := ReadCsv("google_locations.csv")
 	if err != nil {
 		panic(err)
@@ -287,8 +289,9 @@ func main() {
 			Target_Type: line[5],
 			Status: line[6],
         }
-        fmt.Println(data.Name + " " + data.Canonical_Name)
-    }
+		// fmt.Println(data.Name + " " + data.Canonical_Name)
+		googleLocationSlice = append(googleLocationSlice, data)
+	}
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
@@ -298,7 +301,7 @@ func main() {
 }
 
 // TODO:
-//  ---- Parse csv into array of structs
+//  ---- Parse csv into array of structs x
 //  ---- Make autocomplete work with array of structs
 //  ---- Make endpoint for autocomplete
 //  ---- Rate limiting for API
