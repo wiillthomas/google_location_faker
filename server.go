@@ -281,27 +281,15 @@ func main() {
 		panic(err)
 	}
 	for _, line := range lines {
-        // data := GoogleLocation{
-		// 	Criteria_ID: line[0],
-		// 	Name: line[1],
-		// 	Canonical_Name: line[2],
-		// 	Parent_ID: line[3],
-		// 	Country_Code: line[4],
-		// 	Target_Type: line[5],
-		// 	Status: line[6],
-        // }
-		// fmt.Println(data.Name + " " + data.Canonical_Name)
-		// googleLocationSlice = append(googleLocationSlice, data)
 		radix.Insert(line[2])
 	}
 
 	words, err := radix.AutoComplete("Kab", false)
 
-	if err != nil { // No Match Found
+	if err != nil {
 		return
 	}
-
-	// Output: AutoComplete 'rom'; Words: [manus mane mulus]
+	
 	log.Println("AutoComplete: '%s'; Words: %v\n", "ro", words)
 
 
@@ -314,7 +302,7 @@ func main() {
 
 // TODO:
 //  ---- Parse csv into array of structs x
-//  ---- Make autocomplete work with array of structs
+//  ---- Make autocomplete work with array of structs x
 //  ---- Make endpoint for autocomplete
 //  ---- Rate limiting for API
 //  ---- Typecheck API
