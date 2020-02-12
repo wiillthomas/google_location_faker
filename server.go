@@ -8,6 +8,7 @@ import (
 	"encoding/csv"
 	"os"
 	"github.com/falmar/goradix"
+	"github.com/didip/tollbooth"
 )
 
 var radix = goradix.New(false)
@@ -273,6 +274,8 @@ func handleAutoCompleteInput( w http.ResponseWriter, r *http.Request ) {
 		return
 	}
 
+	log.Println(inputKeys[0])
+
 	words, err := radix.AutoComplete(inputKeys[0], false)
 
 	if err != nil {
@@ -305,7 +308,7 @@ func main() {
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
-	http.HandleFunc("/api", handleAPICall)
+	http.Handle("/api", tollbooth.LimitFuncHandler(tollbooth.NewLimiter(1, nil), handleAPICall))
 	http.HandleFunc("/autocomplete", handleAutoCompleteInput)
 	log.Println("Listening...")
 	http.ListenAndServe(":8080", nil)
@@ -314,8 +317,9 @@ func main() {
 // TODO:
 //  ---- Parse csv into array of structs x
 //  ---- Make autocomplete work with array of structs x
-//  ---- Make endpoint for autocomplete
+//  ---- Make endpoint for autocomplete x
 //  ---- Rate limiting for API
-//  ---- Typecheck API
+//  ---- Typecheck API inputs
+// 	---- Handle Case Sensitivity for input warning on FE
 //  ---- Style FE code
 //  ---- Tidy up
