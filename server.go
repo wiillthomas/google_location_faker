@@ -282,6 +282,7 @@ func handleAutoCompleteInput( w http.ResponseWriter, r *http.Request ) {
 		return
 	}
 
+
 	jsonOutput, jsonErr := json.Marshal(words)
 
 	if jsonErr != nil {
