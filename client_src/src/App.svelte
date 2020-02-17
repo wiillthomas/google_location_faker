@@ -31,7 +31,7 @@
 			return response.json()
 		})
 		.then((data) => {
-			console.log(data)
+			console.log(data)  
 			locationPlaceholder = ""
 			for ( let i = 0; i < 10; i += 1 ) {
 				if ( data[ i ] !== undefined ) {
@@ -66,16 +66,16 @@
 		position: relative;
 	}
 	.location-input__container input {
-		position: absolute;
-		font-size: 16px;
-		letter-spacing: 1px;
+		position: absolute;  
+		font-size: 16px; 
+		letter-spacing: 1px;  
 	}
 	.location-input__container .placeholder {
 		position: absolute;
-		font-size: 16px;
+		font-size: 14px;
 		top: 38px;
-		left: 24px;
-    	letter-spacing: 1px;
+		left: 20px;
+    	letter-spacing: 1px; 
 	}
 </style>
 

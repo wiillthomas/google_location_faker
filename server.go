@@ -203,6 +203,8 @@ func calculateSecretValue( lengthOfString int ) (string, bool) {
 
 }
 
+
+
 func handleAPICall( w http.ResponseWriter, r *http.Request ) {
 	
 	locationKeys, locationOk := r.URL.Query()["location"]
@@ -217,6 +219,15 @@ func handleAPICall( w http.ResponseWriter, r *http.Request ) {
 		log.Println("Url Parameter 'q' is missing ")
 		return
 	}
+
+	if len(locationKeys[0]) > 100 {
+		log.Println("Url parameter 'location' is too long")
+	}
+
+	if len(queryKeys[0]) > 100 {
+		log.Println("Url parameter 'q' is too long")
+	}
+
 
 	location := locationKeys[0]
 	query := queryKeys[0]
@@ -274,6 +285,11 @@ func handleAutoCompleteInput( w http.ResponseWriter, r *http.Request ) {
 		return
 	}
 
+	if len(inputKeys[0]) > 100 {
+		log.Println("Url parameter 'input' is too long")
+		return 
+	}
+
 	log.Println(inputKeys[0])
 
 	words, err := radix.AutoComplete(inputKeys[0], false)
@@ -320,7 +336,8 @@ func main() {
 //  ---- Make autocomplete work with array of structs x
 //  ---- Make endpoint for autocomplete x
 //  ---- Rate limiting for API
-//  ---- Typecheck API inputs
+//  ---- Validating API inputs x
 // 	---- Handle Case Sensitivity for input warning on FE
 //  ---- Style FE code
+// 	---- Better error messaging
 //  ---- Tidy up
