@@ -1,6 +1,7 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 
+
 const mode = process.env.NODE_ENV || 'development';
 const prod = mode === 'production';
 
@@ -17,7 +18,7 @@ module.exports = {
 	},
 	output: {
 		// path: __dirname + '/static',
-		path: path.resolve(__dirname, "./../../static"),
+		path: __dirname + "/../static",
 		filename: '[name].js',
 		chunkFilename: '[name].[id].js'
 	},
