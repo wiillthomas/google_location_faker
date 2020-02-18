@@ -7,6 +7,7 @@
 	let googleLink;
 	let flashError;
 	let locationPlaceholder = "Fr";
+	let possibleLocations = []
 
 	function handleClick(){
 		if ( location && query ) {
@@ -31,12 +32,11 @@
 			return response.json()
 		})
 		.then((data) => {
-			console.log(data)  
 			locationPlaceholder = ""
+			possibleLocations.length = 0
 			for ( let i = 0; i < 10; i += 1 ) {
-				if ( data[ i ] !== undefined ) {
-					locationPlaceholder += `${location}${data[i]}
-					`
+				if ( data[i] ){
+					possibleLocations.push(`${location}${data[i]}`)
 				}
 			}
 		})
@@ -46,9 +46,6 @@
 </script>
 
 <style>
-	h1 {
-		color: purple;
-	}
 	.flash-message {
 		display: flex;
 		height: 50px;
@@ -62,21 +59,44 @@
 		justify-content: center;
 		align-items: center;
 	}
-	.location-input__container {
+
+	.container {
+		height: 100vh;
+		width: 100vw;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	.container .input-container {
+		display: flex;
+		flex-direction: row;
+	}
+	.container input, .container button {
+		height: 40px;
+	}
+
+	input.query {
 		position: relative;
 	}
-	.location-input__container input {
-		position: absolute;  
-		font-size: 16px; 
-		letter-spacing: 1px;  
-	}
-	.location-input__container .placeholder {
+	input.query::before {
+		content: "Query";
 		position: absolute;
-		font-size: 14px;
-		top: 38px;
-		left: 20px;
-    	letter-spacing: 1px; 
+		top: -10px;
+		left: 0;
 	}
+	
+	.possible-location-container {
+		position: absolute;
+		display: flex;
+		flex-direction: column
+	}
+
+	.possible-location-container button {
+		text-align: left;
+	}
+
 </style>
 
 {#if flashError}
@@ -85,16 +105,26 @@
 	</div>
 {/if}
 
-	<input bind:value={query}>
-<div class="location-input__container">
-	<input bind:value={location} on:keyup={handleAutoComplete} placeholder={locationPlaceholder}>
-	<div class="placeholder">{ locationPlaceholder }</div>
+<div class="container">
+	<div class="input-container">
+		<input class="query" bind:value={query}>
+		<div class="location location-input__container">
+			<input bind:value={location} on:keyup={handleAutoComplete} >
+				<div class="possible-location-container">
+					{#each possibleLocations as location}
+						<button name={location}>
+							{location}
+						</button>
+					{/each}
+				</div>
+		</div>
+		<button on:click={handleClick}>
+			Get Results
+		</button>
+	</div>
+	<div class="link-container">
+		{#if googleLink}
+			<a href={googleLink}>link here!</a>
+		{/if}
+	</div>
 </div>
-
-<button on:click={handleClick}>
-	Get Results
-</button>
-
-{#if googleLink}
-	<a href={googleLink}>link here!</a>
-{/if}
