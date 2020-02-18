@@ -8,6 +8,7 @@
 	let flashError;
 	let locationPlaceholder = "Fr";
 	let possibleLocations = []
+	let possibleLocationFocus = -1;
 
 	function handleClick(){
 		if ( location && query ) {
@@ -25,22 +26,36 @@
 		}
 	}
 
-	function handleAutoComplete() {
-		console.log(location)
-		fetch(`http://localhost:8080/autocomplete?input=${location}`)
-		.then(( response ) => {
-			return response.json()
-		})
-		.then((data) => {
-			locationPlaceholder = ""
-			possibleLocations.length = 0
-			for ( let i = 0; i < 10; i += 1 ) {
-				if ( data[i] ){
-					possibleLocations.push(`${location}${data[i]}`)
-				}
+	function handleLocationInputChange( e ) {
+		if ( e.keyCode == 38 ) {
+			if ( possibleLocationFocus !== -1 ){
+				e.preventDefault()
+				possibleLocationFocus -= 1
+				document.getElementById(`possibleLocation--${ possibleLocationFocus }`).focus()
 			}
-		})
-		.catch(err =>  console.log(err))
+		} else if ( e.keyCode == 40 ) {
+			e.preventDefault()
+			possibleLocationFocus += 1
+			document.getElementById(`possibleLocation--${ possibleLocationFocus }`).focus()
+		} else {
+			possibleLocations.length = 0
+			possibleLocationFocus = -1
+			fetch(`http://localhost:8080/autocomplete?input=${location}`)
+			.then(( response ) => {
+				return response.json()
+			})
+			.then((data) => {
+				locationPlaceholder = ""
+				possibleLocations.length = 0
+				for ( let i = 0; i < 10; i += 1 ) {
+					if ( data[i] ){
+						possibleLocations.push(`${location}${data[i]}`)
+					}
+				}
+	
+			})
+			.catch(err =>  console.log(err))
+		}
 	}
 
 </script>
@@ -109,10 +124,10 @@
 	<div class="input-container">
 		<input class="query" bind:value={query}>
 		<div class="location location-input__container">
-			<input bind:value={location} on:keyup={handleAutoComplete} >
+			<input bind:value={location} on:keyup={handleLocationInputChange} >
 				<div class="possible-location-container">
-					{#each possibleLocations as location}
-						<button name={location}>
+					{#each possibleLocations as location, i}
+						<button on:keyup={handleLocationInputChange} id={`possibleLocation--${i}`} name={location}>
 							{location}
 						</button>
 					{/each}
