@@ -26,6 +26,11 @@
 		}
 	}
 
+	function handlePossibleLocationSubmit( e ) {
+		e.preventDefault()
+		location = e.currentTarget.name
+	}
+
 	function handleLocationInputChange( e ) {
 		if ( e.keyCode == 38 ) {
 			if ( possibleLocationFocus !== -1 ){
@@ -95,13 +100,6 @@
 	input.query {
 		position: relative;
 	}
-	input.query::before {
-		content: "Query";
-		position: absolute;
-		top: -10px;
-		left: 0;
-	}
-	
 	.possible-location-container {
 		position: absolute;
 		display: flex;
@@ -127,7 +125,7 @@
 			<input bind:value={location} on:keyup={handleLocationInputChange} >
 				<div class="possible-location-container">
 					{#each possibleLocations as location, i}
-						<button on:keyup={handleLocationInputChange} id={`possibleLocation--${i}`} name={location}>
+						<button on:click={handlePossibleLocationSubmit} on:keyup={handleLocationInputChange} id={`possibleLocation--${i}`} name={location}>
 							{location}
 						</button>
 					{/each}
