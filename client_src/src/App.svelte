@@ -9,6 +9,7 @@
 	let locationPlaceholder = "Fr";
 	let possibleLocations = []
 	let possibleLocationFocus = -1;
+	let autoCompleteError = false;
 
 	function handleClick(){
 		if ( location && query ) {
@@ -27,7 +28,7 @@
 	}
 
 	function handlePossibleLocationSubmit( e ) {
-		e.preventDefault()
+		e.preventDefault() 
 		location = e.currentTarget.name
 	}
 
@@ -47,6 +48,7 @@
 			possibleLocationFocus = -1
 			fetch(`http://localhost:8080/autocomplete?input=${location}`)
 			.then(( response ) => {
+				autoCompleteError = false
 				return response.json()
 			})
 			.then((data) => {
@@ -59,7 +61,11 @@
 				}
 	
 			})
-			.catch(err =>  console.log(err))
+			.catch(( err ) =>  {
+				if ( location ) {
+					autoCompleteError = true
+				}
+			})
 		}
 	}
 
@@ -110,6 +116,38 @@
 		text-align: left;
 	}
 
+
+	.autoCompleteError {
+		position: relative;
+	}
+
+	.error-tooltip {
+		display : none;
+		position: absolute;
+		background: black;
+		padding: 15px 20px;
+    	top: 55px;
+		left: 5px;
+		z-index: 500;
+		visibility: visible;
+		color: white;
+	}
+
+	.error-tooltip::after {
+		left: 10px;
+		content: "";
+		background-color: inherit;
+		height: 13px;
+		width: 13px;
+		position: absolute;
+		top: -6px;
+		transform: rotate(45deg);
+	}
+	
+	.autoCompleteError .error-tooltip {
+		display: block;
+	}
+
 </style>
 
 {#if flashError}
@@ -121,8 +159,11 @@
 <div class="container">
 	<div class="input-container">
 		<input class="query" bind:value={query}>
-		<div class="location location-input__container">
+		<div class="location location-input__container { autoCompleteError ? "autoCompleteError" : "" }">
 			<input bind:value={location} on:keyup={handleLocationInputChange} >
+				<div class="error-tooltip">
+					No location found in our database - however you can still try it. Note the input is case sensitive.
+				</div>
 				<div class="possible-location-container">
 					{#each possibleLocations as location, i}
 						<button on:click={handlePossibleLocationSubmit} on:keyup={handleLocationInputChange} id={`possibleLocation--${i}`} name={location}>
