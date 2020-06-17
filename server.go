@@ -264,14 +264,12 @@ func handleAPICall(w http.ResponseWriter, r *http.Request) {
 
 func ReadCsv(filename string) ([][]string, error) {
 
-	// Open CSV file
 	f, err := os.Open(filename)
 	if err != nil {
 		return [][]string{}, err
 	}
 	defer f.Close()
 
-	// Read File into a Variable
 	lines, err := csv.NewReader(f).ReadAll()
 	if err != nil {
 		return [][]string{}, err
@@ -333,19 +331,3 @@ func main() {
 	log.Println("Listening...")
 	http.ListenAndServe(":8080", nil)
 }
-
-// TODO:
-//  ---- Parse csv into array of structs x
-//  ---- Make autocomplete work with array of structs x
-//  ---- Make endpoint for autocomplete x
-//  ---- Rate limiting for API x
-//  ---- Validating API inputs x
-//  ---- Handle Case Sensitivity for input warning on FE X
-//  ---- Fix flickering on input
-//  ---- Style FE code
-//  ---- Redirect automatically button
-//  ---- Better error messaging
-//  ---- Write tests
-//  ---- Tidy up/refactor
-//  ---- Remove CORS
-//  ---- Buy domain & deploy

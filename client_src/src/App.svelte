@@ -167,7 +167,7 @@
 				<div class="possible-location-container">
 					{#each possibleLocations as location, i}
 						<button on:click={handlePossibleLocationSubmit} on:keyup={handleLocationInputChange} id={`possibleLocation--${i}`} name={location}>
-							{location}
+							{location} 
 						</button>
 					{/each}
 				</div>
@@ -176,7 +176,7 @@
 			Get Results
 		</button>
 	</div>
-	<div class="link-container">
+	<div class="link-container"> 
 		{#if googleLink}
 			<a href={googleLink}>link here!</a>
 		{/if}
