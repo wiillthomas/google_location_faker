@@ -18,7 +18,7 @@ module.exports = {
 	},
 	output: {
 		// path: __dirname + '/static',
-		path: __dirname + "/../static",
+		path: __dirname + "/../../static",
 		filename: '[name].js',
 		chunkFilename: '[name].[id].js'
 	},

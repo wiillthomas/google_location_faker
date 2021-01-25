@@ -254,28 +254,25 @@
 		<p>See local map results as if you were in the location.</p>
 	</div>
 	<div class="input-container">
-		<label class="floating-label">
-			<input autoComplete="off" bind:value={query} placeholder="Keyword" required />
-			<span class="floating-label__el">Keyword</span>
-		</label>
-		<div class="location location-input__container">
-			<label class="floating-label">
-				<input bind:value={location} on:keyup={handleLocationInputChange} placeholder="Location" required />
-				<span class="floating-label__el">Location</span>
-			</label>
-			<div class="possible-location-container { !displayPossibleLocations ? "possible-location-container--hide" : null }">
-				{#each possibleLocations as location, i}
-					<button on:click={handlePossibleLocationSubmit} on:keyup={handleLocationInputChange} id={`possibleLocation--${i}`} name={location}>
-						{location}
-					</button>
-				{/each}
-			</div>
+		<input class="query" bind:value={query}>
+		<div class="location location-input__container { autoCompleteError ? "autoCompleteError" : "" }">
+			<input bind:value={location} on:keyup={handleLocationInputChange} >
+				<div class="error-tooltip">
+					No location found in our database - however you can still try it. Note the input is case sensitive.
+				</div>
+				<div class="possible-location-container">
+					{#each possibleLocations as location, i}
+						<button on:click={handlePossibleLocationSubmit} on:keyup={handleLocationInputChange} id={`possibleLocation--${i}`} name={location}>
+							{location} 
+						</button>
+					{/each}
+				</div>
 		</div>
 		<button class="submit" on:click={handleClick}>
 			Get Results
 		</button>
 	</div>
-	<div class="link-container">
+	<div class="link-container"> 
 		{#if googleLink}
 			<a class="link" href={googleLink} target="_blank">Link here!</a>
 		{/if}
