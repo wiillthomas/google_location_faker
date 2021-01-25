@@ -282,6 +282,7 @@
 	</div>
 	<div class="instructions { displayPossibleLocations ? "instructions--hide" : null } ">
 		<div class="instructions__left">
+			<h2 style="margin-top: 0">How does it work?</h2>
 			Google uses an algorithm, which is based on the length of the input location, to encode the location data of a search. <br /><br /> We can fake the output of this algorithm to trick Google to show us local listings. 
 		</div>
 		<div class="instructions__right">
