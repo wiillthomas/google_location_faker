@@ -13,7 +13,7 @@
 	function handleClick(){
 		displayPossibleLocations = false;
 		if ( location && query && location.length > 3 ) {
-			fetch(`http://localhost:8080/api?q=${ query }&location=${ location }` )
+			fetch(`https://location-faker.onrender.com/api?q=${ query }&location=${ location }` )
 			.then( ( response ) =>  response.json() )
 			.then( ( data ) => {
 				googleLink = `https://google.com/search?${data}`
@@ -52,7 +52,7 @@
 		} else {
 			possibleLocations.length = 0
 			possibleLocationFocus = -1
-			fetch(`http://localhost:8080/autocomplete?input=${location}`)
+			fetch(`https://location-faker.onrender.com/autocomplete?input=${location}`)
 			.then(( response ) => {
 				autoCompleteError = false
 				return response.json()
